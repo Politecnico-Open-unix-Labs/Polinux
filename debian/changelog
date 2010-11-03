@@ -1,0 +1,317 @@
+polinux-desktop (2.3.0-1ubuntu1) lucid; urgency=low
+
+  * Solved a bug in icon name.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 23 Apr 2010 10:29:35 +0200
+
+polinux-desktop (2.3.0-1) lucid; urgency=low
+
+  * Moving to the next level.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Sun, 11 Apr 2010 19:10:30 +0200
+
+polinux-desktop (2.2.4-1ubuntu1) karmic; urgency=low
+
+  * Temporarily removed VirtualBox for installation problems.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 24 Mar 2010 16:32:00 +0100
+
+polinux-desktop (2.2.4-1) karmic; urgency=low
+
+  * Added some dependencies and modified the main autoproxy script.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 29 Dec 2009 11:31:30 +0100
+
+polinux-desktop (2.2.3-1) karmic; urgency=low
+
+  * Solved a bug in autoproxy.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 18 Dec 2009 17:16:11 +0100
+
+polinux-desktop (2.2.2) karmic; urgency=low
+
+  * Solved a bug in autoscript SVN configuration; added
+  * vim and htop as dependencies for polinux extra.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 17 Dec 2009 21:54:06 +0100
+
+polinux-desktop (2.2.1-1ubuntu2) karmic; urgency=low
+
+  * Solved a bug.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 27 Nov 2009 13:22:48 +0100
+
+polinux-desktop (2.2.1-1ubuntu1) karmic; urgency=low
+
+  * Moved test script outside the polinux package.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 27 Nov 2009 13:02:45 +0100
+
+polinux-desktop (2.2.1-1) karmic; urgency=low
+
+  * Added an autoproxy script for Subversion.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 24 Nov 2009 16:27:33 +0100
+ 
+polinux-desktop (2.2.0-1ubuntu2) karmic; urgency=low
+
+  * Specify with more detail how to replace the old package.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 20 Nov 2009 13:08:40 +0100
+
+polinux-desktop (2.2.0-1ubuntu1) karmic; urgency=low
+
+  * Specify that the new polinux-DE-wifi substitutes the old polinux-wifi package.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 19 Nov 2009 12:04:22 +0100
+
+polinux-desktop (2.2.0-1) karmic; urgency=low
+
+  * Added a new script version optimized for KDE.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 18 Nov 2009 15:40:26 +0100
+
+polinux-desktop (2.1.3-1ubuntu3) karmic; urgency=low
+
+  * Added qcad and elmer.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 05 Nov 2009 11:18:54 +0100
+
+polinux-desktop (2.1.3-1ubuntu2) karmic; urgency=low
+
+  * Corrected an error in debian/control.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 03 Nov 2009 23:23:24 +0100
+
+polinux-desktop (2.1.3-1ubuntu1) karmic; urgency=low
+
+  * Solved the n-th dependency problem: partimage on amd64 does not exist.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 03 Nov 2009 18:39:36 +0100
+
+polinux-desktop (2.1.3-1) karmic; urgency=low
+
+  * Added license informations.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 03 Nov 2009 15:28:51 +0100
+
+polinux-desktop (2.1.2-1) karmic; urgency=low
+
+  * Changed the default background wallpaper.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 23:19:45 +0100
+
+polinux-desktop (2.1.1-1ubuntu10) karmic; urgency=low
+
+  * Removed the -e option for echo: postinst already uses it.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 19:03:11 +0100
+
+polinux-desktop (2.1.1-1ubuntu9) karmic; urgency=low
+
+  * Solved a bug in an installation script.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 18:52:46 +0100
+
+polinux-desktop (2.1.1-1ubuntu8) karmic; urgency=low
+
+  * Added an exit signal, for avoiding errors.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 18:11:50 +0100
+
+polinux-desktop (2.1.1-1ubuntu7) karmic; urgency=low
+
+  * Moving around the script code. Testing still in progress.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 15:57:16 +0100
+
+polinux-desktop (2.1.1-1ubuntu6) karmic; urgency=low
+
+  * Moved autoproxy from profile.d to bash.bashrc, commented,
+  * to avoid login problems in GDM.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 14:33:31 +0100
+
+polinux-desktop (2.1.1-1ubuntu5) karmic; urgency=low
+
+  * Added a new value for setting the Gnome proxy correctly.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 13:08:17 +0100
+
+polinux-desktop (2.1.1-1ubuntu4) karmic; urgency=low
+
+  * Moved utilities to the Network section in menu.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 02 Nov 2009 11:44:56 +0100
+
+polinux-desktop (2.1.1-1ubuntu3) karmic; urgency=low
+
+  * Deleted root-system from the dependencies: as of today, it is not
+  * downloadable from the official Ubuntu repositories (dependency error).
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Sun, 01 Nov 2009 23:01:34 +0100
+
+polinux-desktop (2.1.1-1ubuntu2) karmic; urgency=low
+
+  * Removed eclipse-ctd, because it is not in the repository anymore.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 30 Oct 2009 12:50:40 +0100
+
+polinux-desktop (2.1.1-1ubuntu1) karmic; urgency=low
+
+  * Corrected an error in dirs filename.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 29 Oct 2009 23:49:05 +0100
+
+polinux-desktop (2.1.1-1) karmic; urgency=low
+
+  * Version bump: source file had problems.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 29 Oct 2009 13:20:22 +0100
+
+polinux-desktop (2.1-1ubuntu3) karmic; urgency=low
+
+  * Installed a new script for setting system-wide environment variables
+  * about the Polimi proxy, if the user is located in the university campus.
+  * Trying to install it under profile.d.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 29 Oct 2009 13:15:12 +0100
+
+polinux-desktop (2.1-1ubuntu2) karmic; urgency=low
+
+  * Added a few packages: freemat, speedcrunch and labplot.
+  * Now the installer sets the usage of the proxy (which was already
+  * added), and the uninstaller correctly unsets it (at least,
+  * globally).
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 21 Oct 2009 15:57:40 +0200
+
+polinux-desktop (2.1-1ubuntu1) karmic; urgency=low
+
+  * Removed eclipse-pydev (not present in Karmic archives) and
+  * glassfish (the repository version has problems).
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 19 Oct 2009 20:09:09 +0200
+
+polinux-desktop (2.1-1) karmic; urgency=low
+
+  * Initial port to Karmic.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 02 Oct 2009 19:35:31 +0200
+
+polinux-desktop (2.0-1ubuntu14) jaunty; urgency=low
+
+  * Added Avogadro as a dependency for chemical users.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 14 May 2009 22:17:43 +0200
+
+polinux-desktop (2.0-1ubuntu13) jaunty; urgency=low
+
+  * Added version control for NetworkManager (GNOME edition).
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Thu, 14 May 2009 11:08:27 +0200
+
+polinux-desktop (2.0-1ubuntu12) jaunty; urgency=low
+
+  * Added ROOT system in the math package.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 12 May 2009 13:38:55 +0200
+
+polinux-desktop (2.0-1ubuntu11) jaunty; urgency=low
+
+  * Removed hard-coded password.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 12 May 2009 10:46:39 +0200
+
+polinux-desktop (2.0-1ubuntu10) jaunty; urgency=low
+
+  * Re-added Freemind.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 28 Apr 2009 09:53:39 +0200
+
+polinux-desktop (2.0-1ubuntu9) jaunty; urgency=low
+
+  * Automatically setting Gnome proxy; now polinux-wifi installs either with NM or Wicd.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 24 Apr 2009 15:53:04 +0200
+
+polinux-desktop (2.0-1ubuntu8) jaunty; urgency=low
+
+  * Corrected a phrase.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 22 Apr 2009 20:47:04 +0200
+
+polinux-desktop (2.0-1ubuntu7) jaunty; urgency=low
+
+  * Updated polinux-courses with some more dependencies; now it is an autonomous package.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 22 Apr 2009 16:41:46 +0200
+
+polinux-desktop (2.0-1ubuntu6) jaunty; urgency=low
+
+  * Added a few more course packages; now launching NM script as normal user.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Wed, 22 Apr 2009 09:52:44 +0200
+
+polinux-desktop (2.0-1ubuntu5) jaunty; urgency=low
+
+  * Wifi NetworkManager script now launches as normal user.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 21 Apr 2009 23:31:12 +0200
+
+polinux-desktop (2.0-1ubuntu4) jaunty; urgency=low
+
+  * Updated wifi scripts; added polinux-courses for our 2009 courses.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 21 Apr 2009 21:14:52 +0200
+
+polinux-desktop (2.0-1ubuntu3) jaunty; urgency=low
+
+  * Added the new NetworkManager script, in parallel with the Wicd one. 
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 20 Apr 2009 17:56:57 +0200
+
+polinux-desktop (2.0-1ubuntu2) jaunty; urgency=low
+
+  * Removed any modification to /etc/network/interfaces,
+  * not needed anymore.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Sat, 18 Apr 2009 15:45:32 +0200
+
+polinux-desktop (2.0-1ubuntu1) jaunty; urgency=low
+
+  * Removed XMind dependency, for repository problems.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Sat, 18 Apr 2009 12:32:55 +0200
+
+polinux-desktop (2.0-1) jaunty; urgency=low
+
+  * Polinux 2.0 beta 1: split in multiple packages.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 31 Mar 2009 19:10:40 +0200
+
+polinux-desktop (1.0-1ubuntu1) intrepid; urgency=low
+
+  * Added password shadowing in wifiwizard script.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 27 Mar 2009 10:02:45 +0100
+
+polinux-desktop (1.0-1) intrepid; urgency=low
+
+  * Polinux first stable release.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Mon, 09 Mar 2009 19:39:14 +0100
+
+polinux-desktop (0.2-1) intrepid; urgency=low
+
+  * Added the Wifi configuration script and proxy autoconfiguration for
+  * Firefox 3.x.
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Fri, 27 Feb 2009 19:08:05 +0100
+
+polinux-desktop (0.1) intrepid; urgency=low
+
+  * Initial release
+
+ -- Alessandro Sivieri <alessandro.sivieri@gmail.com>  Tue, 09 Dec 2008 21:49:53 +0100
+

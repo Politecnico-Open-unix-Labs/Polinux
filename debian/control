@@ -1,0 +1,87 @@
+Source: polinux-desktop
+Section: misc
+Priority: extra
+Maintainer: Sivieri Alessandro <alessandro.sivieri@gmail.com>
+Build-Depends: cdbs, debhelper (>= 7)
+Standards-Version: 3.8.4
+Homepage: http://www.poul.org
+
+Package: polinux-desktop
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ubuntu-desktop, polinux-gnome-wifi | polinux-kde-wifi, polinux-artwork, polinux-programming, polinux-math, polinux-network, polinux-electronics, polinux-chemicals, polinux-geo, polinux-architectural, polinux-extra, polinux-codecs, gnupg, seahorse, seahorse-plugins, openoffice.org-gnome, language-pack-it, language-pack-gnome-it, language-support-it
+Description: GNU/Linux distribution for the Politecnico di Milano - metapackage
+ This will install all dependencies and a script for helping configuring the Wifi connection offered by Politecnico di Milano.
+
+Package: polinux-gnome-wifi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zenity, openssl, network-manager-gnome ( >= 0.7.1~rc4.1-0ubuntu2) | wicd
+Conflicts: polinux-wifi, polinux-kde-wifi
+Replaces: polinux-wifi
+Description: Wifi script and guide package for Polinux, optimized for Gnome.
+ 
+
+Package: polinux-kde-wifi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, kdebase-bin, openssl, wicd
+Conflicts: polinux-wifi, polinux-gnome-wifi
+Replaces: polinux-wifi
+Description: Wifi script and guide package for Polinux, optimized for KDE.
+ 
+
+Package: polinux-artwork
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Artwork for Polinux
+ 
+
+Package: polinux-programming
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, build-essential, default-jdk, eclipse, anjuta, mysql-client, mysql-server, rapidsvn, subversion, flex, flex-doc, bison, bison-doc, manpages-dev
+Description: Programming dependencies for Polinux.
+ 
+
+Package: polinux-math
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, octave3.0, octave3.0-doc, octave-audio, octave-bioinfo, octave-communications, octave-financial, octave-ga, octave-image, octave-linear-algebra, octave-odepkg, octave-signal, octave-statistics, gnuplot, scilab, scilab-doc, maxima, wxmaxima, r-recommended, python-scipy, python-matplotlib, freefem, freemat, speedcrunch, labplot, elmer
+Description: Math dependencies for Polinux.
+ 
+
+Package: polinux-network
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, wireshark, filezilla, firebug, firefox-webdeveloper
+Description: Network dependencies for Polinux.
+ 
+
+Package: polinux-electronics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, geda, geda-doc, geda-examples, oregano
+Description: Electronics dependencies for Polinux.
+ 
+
+Package: polinux-chemicals
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, kalzium, gromacs, avogadro
+Description: Chemicals dependencies for Polinux.
+ 
+
+Package: polinux-geo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, celestia, grass, stellarium
+Description: Geo dependencies for Polinux.
+ 
+
+Package: polinux-architectural
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, blender, qcad
+Description: Architectural dependencies for Polinux.
+ 
+
+Package: polinux-extra
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, texlive-full, lyx, wine, freemind, htop, vim
+Description: Extra packages for Polinux.
+ 
+Package: polinux-codecs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, gstreamer0.10-plugins-bad, gstreamer0.10-plugins-bad-multiverse, gstreamer0.10-plugins-ugly, gstreamer0.10-plugins-ugly-multiverse, vlc 
+Description: Codecs for Polinux.

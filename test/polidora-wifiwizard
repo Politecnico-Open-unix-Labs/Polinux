@@ -1,0 +1,302 @@
+#!/bin/bash
+# vim: fileencoding=ascii :
+#
+# Author: Stefano Sanfilippo 
+# Based on wifiwizard-wicd by Sante Rotondi <saten.r@gmail.com>
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+
+wicd_tpl="/etc/polimi/wicd.tpl"
+nm_tpl="/etc/polimi/nm.tpl"
+
+#=======================
+# GUI Section
+#=======================
+
+zenity_error()		{ zenity --error --title="Attenzione!" --text="$1"; }
+zenity_fatal()		{ zenity --error --title="Errore" --text="$1"; } #exit 1; }
+zenity_question()	{ zenity --question --title="$1" --text="$2"; }
+zenity_file()		{ zenity --title="$1" --filename="$2" --file-selection; }
+zenity_input()		{ zenity --title="$1" --text="$2" --entry; }
+zenity_password()	{ zenity --entry --hide-text --title="Password" --text="$1"; }
+zenity_info()		{ zenity --info --title="$1" --text="$2"; }
+
+zenity_choose() #FIXME zenity  [...] $3 <-- TRUE Studente FALSE Visitatore FALSE "Utente Tecnico - Amministrativo" FALSE Docente
+{	zenity  --list --title "$1" --radiolist --column "" --column "$2" \
+		TRUE "Studente" \
+		FALSE "Visitatore" \
+		FALSE "Utente Tecnico - Amministrativo" \
+		FALSE "Docente"
+}
+
+kdialog_error()		{ kdialog --error "$1"; }
+kdialog_fatal()		{ kdialog --error "$1"; } #exit 1; }
+kdialog_question()	{ kdialog --title "$1" --warningcontinuecancel "$2"; } #--yesno
+kdialog_file()		{ kdialog --title="$1" --getopenfilename "$2"; }
+kdialog_input()		{ kdialog --title="$1" --inputbox "$2"; }
+kdialog_password()	{ kdialog --title="Password" --password "$1"; }
+kdialog_info()		{ kdialog --title="$1" --msgbox "$2"; }
+
+kdialog_choose() #FIXME
+{	kdialog --title "$1" --radiolist "$2" \
+		"Studente" "Studente" TRUE \
+		"Visitatore" "Visitatore" FALSE \
+		"Utente" "Utente Tecnico - Amministrativo" FALSE \
+		"Docente" "Docente" FALSE
+}
+
+choose_ui()
+{	if   [ -n $( which zenity &> /dev/null ) ] #[ $DESKTOP_SESSION = 'gnome' ] &&
+		then gui='zenity'
+	elif [ $DESKTOP_SESSION = 'kde' ] && [ -n $( which kdialog 2> /dev/null ) ]
+		then gui='kdialog'
+	else
+		echo "Impossibile individuare un gestore GUI appropriato: installare zenity o kdialog."
+		exit 1
+	fi
+	#gui="echo" # la canna del gas...
+
+	ERROR="${gui}_error"
+	FATAL="${gui}_fatal"
+	QUESTION="${gui}_question"
+	FILESELECT="${gui}_file"
+	INPUT="${gui}_input"
+	PASSWORD="${gui}_password"
+	INFO="${gui}_info"
+	CHOOSE="${gui}_choose"
+}
+
+#=======================
+# Utilities Section
+#=======================
+
+parse_command_line() #TODO argomenti a linea di comando
+{	args=`getopt -o abc: -- "$@"`
+	set -- $args
+}
+
+check_root()
+{	[ `whoami` = "root" ] || \
+		$FATAL "Per installare il certificato e configurare la rete wireless sono necessari i privilegi di amministratore."
+}
+
+is_installed()
+{	echo $(which $1 2> /dev/null)
+}
+
+check_program()
+{	for program;
+	do
+		[ -n $(is_installed $program) ] || \
+			$FATAL "<b>$program</b> non è installato. Impossibile proseguire."
+	done
+}
+
+#=======================
+# Networking Section
+#=======================
+
+fetch_wifi_settings() #FIXME un poco primitivo... e se poi cambia formato?
+{	wifi_interface=$(iwlist scan 2>/dev/null  | fgrep "completed" | sed s/"     Scan completed :"/""/)
+	[ -n "$wifi_interface" ] || \
+		wifi_interface=$(iwlist scan 2>/dev/null | fgrep "results" | sed s/"     No scan results"/""/)
+	[ -n "$wifi_interface" ] || \
+		$FATAL "<b>Non sono in grado di trovare la scheda wi-fi.</b>\nPer favore controlla che sia accesa e collegata."
+}
+
+obtain_certificate() #FIXME scelta del browser?
+{   #connect_to_polimi
+	exec firefox -remote \
+		"openurl(https://www.asi.polimi.it/rete/wifi/richiesta_certificato.html)" &
+	exit 1
+}
+
+#=======================
+# Interaction Section
+#=======================
+
+choose_certificate()
+{	while  [ ! -e $certp12 ] 
+	do
+		certp12=$($FILESELECT "Seleziona il file CertificatoASI.p12" "CertificatoASI.p12")
+		[ $? -eq 0  ] || exit 1
+		[ -e $certp12 ] || $ERROR "Selezionare il certificato corretto"
+	done
+}
+
+choose_user_type()
+{	while [ -z $categoria ]
+	do
+		categoria=$($CHOOSE "Selezionare categoria utente" "Tipo di utente")
+	    [ $? -eq 0  ] || exit 1
+		categoria=${categoria:0:1}
+	done
+}
+
+insert_number()
+{	while [ -z $matricola ]
+	do
+		matricola=$($INPUT "Matricola" "Inserisci il tuo numero di Matricola")
+	    [ $? -eq 0  ] || exit 1
+		[ -n $matricola ] || $ERROR "La matricola non può essere vuota."
+	done
+	matricola=$categoria$matricola
+}
+
+insert_password()
+{	while [ -z "$pwd" ] 
+	do
+		pwd=$($PASSWORD "Inserisci la password del certificato")
+	    [ $? -eq 0  ] || exit 1
+		[ -n "$pwd" ] || $ERROR "La password non può essere vuota."
+	done
+}
+
+#=====================================
+# Key Section: needs root priviledges
+#=====================================
+
+connect_to_polimi()  #FIXME deprecato, rivedere...
+{	ifconfig $wifi_interface down
+    ifconfig $wifi_interface up
+    iwconfig $wifi_interface essid polimi
+    dhclient $wifi_interface
+}
+
+install_certificate()
+{	[ $certp12 != "/etc/CertificatoASI.p12" ] && cp -f $certp12 /etc/CertificatoASI.p12
+	[ -e /etc/asi.cer ] && rm -f /etc/asi.cer
+
+	cp -f $certp12 /etc/CertificatoASI.p12 || \
+		$FATAL "Impossibile installare il certificato. Controllare lo spazio libero ed i permessi dell'utente."
+
+	openssl pkcs12 -cacerts \
+		-in /etc/CertificatoASI.p12 -out /etc/asi.cer \
+		-passin pass:$pwd -passout pass:$pwd
+
+	chmod 0644 /etc/CertificatoASI.p12 /etc/asi.cer
+
+	[ `grep -c BEGIN /etc/asi.cer` -lt 2 ] && \
+		$FATAL "I dati del certificato non sono corretti, riprovare."
+}
+
+#=======================
+# Main Section
+#=======================
+
+certp12="null"
+matricola=
+categoria=
+pwd=
+wifi_interface=
+
+check_root
+choose_ui
+check_program "openssl"
+fetch_wifi_settings
+
+$QUESTION "Configurazione guidata rete" \
+"<b>Benvenuto nello script di configurazione per la rete senza fili \"internet\".</b>
+
+Se non disponi del file CertificatoASI.p12 ti consiglio di premere il tasto annulla, connetterti alla rete \"polimi\" ed aprire firefox. Si aprirà automaticamente la pagina con le istruzioni.
+
+<b>Per utilizzare questo programma è sufficiente avere a disposizione il certificato.</b>
+
+Non è necessario seguire la guida per Linux presente sul sito dell'ASI. La guida a questo script si trova nella cartella /usr/share/doc/polinux-desktop."
+
+[ $? -eq 0 ] || exit 1
+
+$QUESTION "Domanda" \
+"Ti saranno richiesti il file \"CertificatoASI.p12\", il tuo numero di matricola e la password del certificato.
+
+Se non hai già ottenuto il tuo certificato, premi annulla: verrai connesso alla rete \"polimi\" e si aprirà la pagina per richiederlo."
+
+[ $? -eq 0 ] || obtain_certificate
+
+choose_certificate
+choose_user_type
+insert_number
+insert_password
+
+install_certificate
+
+#=======================
+# NM Section
+#=======================
+
+[ $(is_installed 'nm-applet') ] &&
+{	check_program "gconftool-2" "NetworkManager"
+
+	[ -n $SUDO_USER ] && HOME=/home/$SUDO_USER # FIXME trovare un metodo migliore...
+
+	if [ -d $HOME/.gconf/system/networking/connections ]
+	then 
+		cd $HOME/.gconf/system/networking/connections
+		for connection in $(ls | fgrep -v %gconf.xml);
+		do
+		    echo "INFO: NetworkManager already configured $connection connections"
+		done
+		number=$(expr $connection + 1)
+	fi
+
+	sed "s|%NUMBER%|$number|g" $nm_tpl > /tmp/nm.polimi.xml
+	gconftool-2 --load /tmp/nm.polimi.xml # non da sudo
+
+	$INFO "Configurazione completata." \
+
+"<b>Importante:</b>
+Se si è connessi alla rete <b>\"polimi\"</b>, prima di collegarsi alla rete <b>\"internet\"</b> è necessario disconnettersi.
+	
+Cliccare con il tasto destro sull'icona di network manager (accanto all'orologio) e selezionare \"Modifica connessioni\".
+	
+Cliccare su \"wireless\" e rimuovere la connessione a \"polimi\"."
+}
+
+#=======================
+# Wicd Section
+#=======================
+
+[ $(is_installed 'wicd-client') ] &&
+{	sed "s|%MATRICOLA%|$matricola|" $wicd_tpl > /tmp/wicd.template
+	install -pm 0644 /tmp/wicd.template /etc/wicd/encryption/templates/POLIMI
+	sed -i "s|POLIMI||" /etc/wicd/encryption/templates/active #FIXME collaudare
+	echo "POLIMI" >> /etc/wicd/encryption/templates/active
+
+	$INFO "Installazione certificato completata" \
+
+"<b>Configurazione completata. Tra poco verrà eseguito wicd-client per effettuare la configurazione.</b>
+
+Clicca la freccia verso il basso situata in alto a sinistra e seleziona Hidden Network.
+
+Inserisci il testo \"internet\" senza apici nella finestra di richiesta.
+Clicca il triangolo bianco a sinistra della rete internet, poi \"Impostazioni avanzate\".
+
+Seleziona la casella di \"Utilizza cifratura\" e nel menu sotto di essa seleziona \"<b>POLIMI</b>\".
+
+Nel campo \"Password del certificato\" reimmettere la password.
+
+E' possibile tenere aperta questa finestra per leggere queste istruzioni durante la configurazione di wicd.
+
+<b>In caso di mancata connessione, controllare che la rete internet sia tra quelle disponibili e che la scheda wireless impostata nelle preferenze di wicd sia $wifi_interface.</b>
+" &
+	sleep 7
+	wicd-client -n &
+}
+
+#=======================
+# The end.
+#=======================
+exit 0

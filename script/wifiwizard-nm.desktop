@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Wifi Wizard - NetworkManager
+Comment=Wizard for Politecnico Wifi connection
+Comment[it]=Wizard per la connessione Wifi del Politecnico
+Exec=wifiwizard-nm
+Icon=polinux-logo
+Type=Application
+Categories=Network;
+StartupNotify=true

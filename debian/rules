@@ -1,0 +1,47 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+# Packages that need to install any file
+WIFI_GNOME := polinux-gnome-wifi
+WIFI_KDE := polinux-kde-wifi
+ARTWORK := polinux-artwork
+
+# Installing Polinux files
+SCRIPT1_GNOME_IN := wifiwizard-gnome-wicd.sh
+SCRIPT1_GNOME_OUT := wifiwizard-gnome-wicd
+SCRIPT1_KDE_IN := wifiwizard-kde-wicd.sh
+SCRIPT1_KDE_OUT := wifiwizard-kde-wicd
+SCRIPT2_IN := wifiwizard-nm.sh
+SCRIPT2_OUT := wifiwizard-nm
+SCRIPT3 := wifiwizard-nm-sudo.sh
+SCRIPT4 := autoproxy.sh
+SCRIPT5 := svn.proxy
+FIREFOX_PROFILE := user.js
+SCRIPT1_GNOME_DSC := wifiwizard-gnome-wicd.desktop
+SCRIPT1_KDE_DSC := wifiwizard-kde-wicd.desktop
+SCRIPT2_DSC := wifiwizard-nm.desktop
+SCRIPT_ICON := polinux-logo.png
+WALLPAPER := polinux.jpg
+
+install/$(WIFI_GNOME)::
+	install -m 755 script/$(SCRIPT1_GNOME_IN) debian/$(cdbs_curpkg)/usr/bin/$(SCRIPT1_GNOME_OUT)
+	install -m 755 script/$(SCRIPT2_IN) debian/$(cdbs_curpkg)/usr/bin/$(SCRIPT2_OUT)
+	install -m 755 script/$(SCRIPT3) debian/$(cdbs_curpkg)/usr/bin/$(SCRIPT3)
+	install -m 644 script/$(SCRIPT4) debian/$(cdbs_curpkg)/etc/polinux/$(SCRIPT4)
+	install -m 644 script/$(SCRIPT5) debian/$(cdbs_curpkg)/etc/polinux/$(SCRIPT5)
+	install -m 644 script/$(FIREFOX_PROFILE) debian/$(cdbs_curpkg)/etc/firefox-3.5/profile/$(FIREFOX_PROFILE)
+	install -m 644 script/$(SCRIPT1_GNOME_DSC) debian/$(cdbs_curpkg)/usr/share/applications/$(SCRIPT1_GNOME_DSC)
+	install -m 644 script/$(SCRIPT2_DSC) debian/$(cdbs_curpkg)/usr/share/applications/$(SCRIPT2_DSC)
+	install -m 644 script/$(SCRIPT_ICON) debian/$(cdbs_curpkg)/usr/share/icons/$(SCRIPT_ICON)
+
+install/$(WIFI_KDE)::
+	install -m 755 script/$(SCRIPT1_KDE_IN) debian/$(cdbs_curpkg)/usr/bin/$(SCRIPT1_KDE_OUT)
+	install -m 644 script/$(SCRIPT4) debian/$(cdbs_curpkg)/etc/polinux/$(SCRIPT4)
+	install -m 644 script/$(SCRIPT5) debian/$(cdbs_curpkg)/etc/polinux/$(SCRIPT5)
+	install -m 644 script/$(FIREFOX_PROFILE) debian/$(cdbs_curpkg)/etc/firefox-3.5/profile/$(FIREFOX_PROFILE)
+	install -m 644 script/$(SCRIPT1_KDE_DSC) debian/$(cdbs_curpkg)/usr/share/applications/$(SCRIPT1_KDE_DSC)
+	install -m 644 script/$(SCRIPT_ICON) debian/$(cdbs_curpkg)/usr/share/icons/$(SCRIPT_ICON)
+
+install/$(ARTWORK)::
+	install -m 644 script/$(WALLPAPER) debian/$(cdbs_curpkg)/usr/share/backgrounds/$(WALLPAPER)
