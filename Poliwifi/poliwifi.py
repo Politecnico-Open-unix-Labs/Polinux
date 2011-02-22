@@ -1,4 +1,4 @@
-import org.poul.poliwifi
+import poliwifi
 from PyQt4.QtGui import QApplication
 from sys import argv
 
