@@ -18,7 +18,6 @@
 #
 
 import dbus
-#from dbus.mainloop.glib import DBusGMainLoop
 from dbus.mainloop import qt
 import os
 class NetworkManager(object):
@@ -80,3 +79,11 @@ class NetworkManager(object):
     def getConnectionByName(self):
         '''STUB'''
         pass
+    def getAPProperty(self,path,prop):
+        '''
+        Gets a dbus property for you
+        NO error handling
+        '''
+        aproxy=self.bus.get_object("org.freedesktop.NetworkManager", path)
+        aprop=dbus.Interface(aproxy,dbus.PROPERTIES_IFACE)
+        return aprop.Get("org.freedesktop.NetworkManager.AccessPoint",prop)

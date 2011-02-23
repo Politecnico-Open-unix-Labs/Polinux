@@ -16,20 +16,16 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
+from PySide.QtGui import QWizard
 
-from poliwifi import PoliWifiLinux,nm
-from PySide.QtGui import QApplication
-from sys import argv
-import subprocess
-import os
-
-if __name__ == "__main__":
-    #if os.getuid()!=0:
-    #    subprocess.call(["gksudo", "--description", "poliwifi","python "+__file__])
-    #else:
-        app=QApplication(argv)
-        gui = PoliWifiLinux()
-        gui.show()
-        app.exec_()
+class Wizard(QWizard):
+    def __init__(self):
+        QWizard.__init__(self)
+        self.goto_finish=False
     
-    
+    def nextId(self):
+        if self.goto_finish:
+            return -1;
+        if self.currentId==len(self.pageIds())-1:
+            return -1;
+        return self.currentId() + 1

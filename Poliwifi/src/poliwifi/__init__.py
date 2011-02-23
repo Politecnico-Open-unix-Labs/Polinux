@@ -19,18 +19,25 @@
 
 import interface
 import nm
-from PyQt4 import QtGui
+from PySide import QtGui
+from PySide.QtCore import QObject
+from gui import Wizard
 
-
-class PoliWifiLinux:
+class PoliWifiLinux(QObject):
     def __init__(self):
-        self.window = QtGui.QWizard()
+        QObject.__init__(self)
+        self.window = Wizard()
         self.handler = interface.Ui_poliwifi()
         self.handler.setupUi(self.window)
+        self.window.setOption(QtGui.QWizard.NoBackButtonOnStartPage,True)
+        
     def show(self):
         self.handler.polimi_status.setVisible(False)
         self.handler.polimi_statusbar.setVisible(False)
         nmhandler=nm.NetworkManager()
-        print nmhandler.findAPbyName("admiral0_net")
-        
+        self.openap=nmhandler.findAPbyName("admiral0_net") #TODO
+        if not self.openap:
+            self.window.goto_finish=True
+            self.handler.polimi_status.setText(self.tr("<b><font color='red'>Polimi AP is not in range. Are you under wifi coverage?<b></font>"))
+            self.handler.polimi_status.setVisible(True)
         self.window.show()
