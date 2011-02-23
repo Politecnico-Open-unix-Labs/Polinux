@@ -20,8 +20,9 @@
 import interface
 import nm
 from PySide import QtGui
-from PySide.QtCore import QObject
+from PySide.QtCore import QObject,SIGNAL,SLOT
 from gui import Wizard
+import networkmanager
 
 class PoliWifiLinux(QObject):
     def __init__(self):
@@ -30,14 +31,35 @@ class PoliWifiLinux(QObject):
         self.handler = interface.Ui_poliwifi()
         self.handler.setupUi(self.window)
         self.window.setOption(QtGui.QWizard.NoBackButtonOnStartPage,True)
+        self.openssid="FON_FREE_INTERNET"
         
     def show(self):
         self.handler.polimi_status.setVisible(False)
         self.handler.polimi_statusbar.setVisible(False)
-        nmhandler=nm.NetworkManager()
-        self.openap=nmhandler.findAPbyName("admiral0_net") #TODO
+        self.nmhandler=nm.NetworkManagerClient()
+        self.openap=None
+        if self.nmhandler.wireless!=None:
+            self.openap=self.nmhandler.findAPbyName(self.openssid) #TODO
         if not self.openap:
             self.window.goto_finish=True
-            self.handler.polimi_status.setText(self.tr("<b><font color='red'>Polimi AP is not in range. Are you under wifi coverage?<b></font>"))
-            self.handler.polimi_status.setVisible(True)
+            self.handler.aperror.setText(self.tr("<b><font color='red'>Polimi AP is not in range. Are you under wifi coverage?<b></font>"))
+            self.handler.aperror.setVisible(True)
+        QObject.connect(self.window,SIGNAL("currentIdChanged(int)"),self,SLOT("pageChanged(int)"))
         self.window.show()
+    def pageChanged(self,id):
+        if id==1:
+            self.handler.polimi_status.setVisible(True)
+            self.handler.polimi_statusbar.setVisible(True)
+            self.window.button(Wizard.NextButton).setVisible(False)
+            self.window.button(Wizard.BackButton).setVisible(False)
+            self.nmhandler.nm._connect_to_signal("StateChanged", self.connectionStateChanged)
+            self.connectToOpenAp()
+            
+    def connectToOpenAp(self):
+        print "Ciao otacon"
+    def connectionStateChanged(self,status):
+        status1=networkmanager.NetworkManager.State(3)
+        if str(status)==str(status1):
+            self.handler.polimi_status.setText(self.tr("<b><font color='green'>Connection established</font></b>"))
+            self.handler.polimi_statusbar.setVisible(False)
+            self.window.button(Wizard.NextButton).setVisible(True)

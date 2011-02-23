@@ -86,28 +86,9 @@ p, li { white-space: pre-wrap; }
      </spacer>
     </item>
     <item>
-     <widget class="QLabel" name="polimi_status">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
+     <widget class="QLabel" name="aperror">
       <property name="text">
-       <string>Connecting to polimi...</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QProgressBar" name="polimi_statusbar">
-      <property name="maximum">
-       <number>0</number>
-      </property>
-      <property name="value">
-       <number>25612</number>
-      </property>
-      <property name="textVisible">
-       <bool>true</bool>
-      </property>
-      <property name="format">
-       <string>Connecting to &quot;polimi&quot;...</string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -207,6 +188,32 @@ p, li { white-space: pre-wrap; }
        </size>
       </property>
      </spacer>
+    </item>
+    <item>
+     <widget class="QLabel" name="polimi_status">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Connecting to polimi...</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="polimi_statusbar">
+      <property name="maximum">
+       <number>0</number>
+      </property>
+      <property name="value">
+       <number>539395</number>
+      </property>
+      <property name="textVisible">
+       <bool>true</bool>
+      </property>
+      <property name="format">
+       <string>Connecting to &quot;polimi&quot;...</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

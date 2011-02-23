@@ -26,6 +26,6 @@ class Wizard(QWizard):
     def nextId(self):
         if self.goto_finish:
             return -1;
-        if self.currentId==len(self.pageIds())-1:
+        if self.currentId()==4:
             return -1;
         return self.currentId() + 1
