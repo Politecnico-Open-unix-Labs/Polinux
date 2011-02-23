@@ -3,4 +3,4 @@
 all: uic
 
 uic:
-	pyuic4 wizard.ui > src/poliwifi/interface.py 
+	pyside-uic wizard.ui > src/poliwifi/interface.py 
