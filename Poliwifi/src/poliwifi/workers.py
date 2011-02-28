@@ -64,7 +64,7 @@ class Downloader(QThread):
         self.bro = browser
         self.passphrase = passphrase
         self.certLocation = os.path.expanduser(CERT_LOCATION) # os.path etc.. Serve per trasformare ~ in /home/$utente
-        self.certFolder = os.path.split(self.certLocation)    # Ricava il path solo della cartella
+        self.certFolder = os.path.split(self.certLocation)[0]    # Ricava il path solo della cartella
     
     def run(self):
         self.response = self.bro.open(START_URL)
