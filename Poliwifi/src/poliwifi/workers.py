@@ -19,32 +19,85 @@
 #
 from PySide.QtCore import QThread
 from mechanize import Browser
-import re
+import os
 
-START_URL="https://www.asi.polimi.it/rete/wifi/richiesta_certificato.html"
-PROXY="proxy.polimi.it:8080"
+START_URL = "https://www.asi.polimi.it/rete/wifi/richiesta_certificato.html"
+DOWNLOAD_URL = "http://www.asi.polimi.it/util/download.html?type=certificato"
+CERT_LOCATION = "~/.poli/CertificatoASI.p12"
+FOLDER_MODE = 0700
+PROXY = "proxy.polimi.it:8080"
+
 class Authenticator(QThread):
     '''
     Authenticates to polimi
     '''
+
     def __init__(self,user,password):
         '''
         Constructor
         '''
         QThread.__init__(self)
-        self.triumph=True
-        self.user=user
-        self.password=password
-        self.bro=Browser()
+        self.triumph = True
+        self.user = user
+        self.password = password
+        self.bro = Browser()
         if PROXY:
             self.bro.set_proxies({"http":PROXY,"https":PROXY})
         self.bro.set_handle_robots(0)
+    
     def run(self):
         self.bro.open(START_URL)
         self.bro.follow_link(text='logon')
         self.bro.select_form('')
-        self.bro.form['login']=self.user
-        self.bro.form['password']=self.password
+        self.bro.form['login'] = self.user
+        self.bro.form['password'] = self.password
         self.bro.submit()
-        response=self.bro.open(START_URL)
+        response = self.bro.open(START_URL)
+
+class Downloader(QThread):
+    '''
+    Downloads the certificate file
+    '''
+
+    def __init__(self,browser, passphrase):
+        QThread.__init__(self)
+        self.bro = browser
+        self.passphrase = passphrase
+        self.certLocation = os.path.expanduser(CERT_LOCATION) # os.path etc.. Serve per trasformare ~ in /home/$utente
+        self.certFolder = os.path.split(self.certLocation)    # Ricava il path solo della cartella
+    
+    def run(self):
+        self.response = self.bro.open(START_URL)
+        self.response = self.bro.follow_link(text='nuovo certificato')
+        self.bro.select_form(name='exists')
+        self.bro.submit()
         
+        self.bro.select_form(name='passphrase')
+        self.bro.form['passphrase'] = self.passphrase
+        self.bro.form['passphraseCheck'] = self.passphrase
+        tempfile = self.bro.retrieve(bro.form.click('_qf_passphrase_next'))
+        response = self.bro.open(DOWNLOAD_URL)
+        del tempfile
+        
+        if not os.path.exists(self.certFolder):
+            os.mkdir(self.certFolder, FOLDER_MODE) # Non c'e'? La creo! Permessi di default 0700
+        try:
+            f = open(self.certLocation, "w") 
+            f.write(response.read())
+            f.close()
+        except IOError:
+            print "I/O Error during file writing"
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
