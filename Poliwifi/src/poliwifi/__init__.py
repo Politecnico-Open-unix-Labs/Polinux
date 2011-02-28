@@ -23,6 +23,7 @@ from PySide import QtGui
 from PySide.QtCore import QObject,SIGNAL,SLOT
 from gui import Wizard
 import networkmanager
+import networkmanager.applet.settings as settings
 
 class PoliWifiLinux(QObject):
     def __init__(self):
@@ -31,7 +32,8 @@ class PoliWifiLinux(QObject):
         self.handler = interface.Ui_poliwifi()
         self.handler.setupUi(self.window)
         self.window.setOption(QtGui.QWizard.NoBackButtonOnStartPage,True)
-        self.openssid="FON_FREE_INTERNET"
+        self.openssid="polimi"
+        self.openconn=None
         
     def show(self):
         self.handler.polimi_status.setVisible(False)
@@ -56,7 +58,15 @@ class PoliWifiLinux(QObject):
             self.connectToOpenAp()
             
     def connectToOpenAp(self):
-        print "Ciao otacon"
+        for conn in self.nmhandler.applet.ListConnections():
+            cs=conn.GetSettings()
+            if ("802-11-wireless" in cs) and cs["802-11-wireless"]["ssid"]=="polimi":
+                self.openconn=cs
+        if not self.openconn:
+            c=settings.WiFi(self.openssid)
+            self.nmhandler.applet.AddConnection(c.ConMap())
+        self.nmhandler.connectTo(self.openssid)
+        
     def connectionStateChanged(self,status):
         status1=networkmanager.NetworkManager.State(3)
         if str(status)==str(status1):

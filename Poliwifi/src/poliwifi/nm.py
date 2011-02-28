@@ -18,6 +18,8 @@
 #
 
 import networkmanager
+from networkmanager.applet import NetworkManagerSettings, USER_SERVICE, SYSTEM_SERVICE
+
 import dbus
 from dbus.mainloop.qt import DBusQtMainLoop
 class NetworkManagerClient(object):
@@ -44,11 +46,18 @@ class NetworkManagerClient(object):
         if self.wireless == None:
             print "No Devices Found"
             self.success = False
+        self.applet=NetworkManagerSettings(SYSTEM_SERVICE)
 
                     
-    def connect(self,conf,ap):
+    def connectTo(self,ssid):
         '''STUB'''
-        pass
+        for conn in self.applet.ListConnections():
+            cs=conn.GetSettings()
+            if ("802-11-wireless" in cs) and cs["802-11-wireless"]["ssid"]==ssid:
+                #self.nm.ActivateConnection(USER_SERVICE,conn.object_path,)
+                pass
+            else:
+                pass
     
     def findAPbyName(self,ssid):
         '''Finds AP object by name. Returns only AP with most strength
