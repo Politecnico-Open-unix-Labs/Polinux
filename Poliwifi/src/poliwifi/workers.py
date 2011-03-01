@@ -17,10 +17,11 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-from PySide.QtCore import QThread
+from PySide.QtCore import QThread,Signal
 from mechanize import Browser
 import os
 from subprocess import Popen,PIPE
+import networkmanager.applet.settings as settings
 
 START_URL = "https://www.asict.polimi.it/rete/wifi/richiesta_certificato.html"
 DOWNLOAD_URL = "https://www.asict.polimi.it/util/download.html?type=certificato"
@@ -28,21 +29,22 @@ CERT_LOCATION = "~/.poli/CertificatoASI.p12"
 FOLDER_MODE = 0700
 PROXY = "proxy.polimi.it:8080"
 CMD_OSSL="openssl pkcs12 -cacerts -in {0} -out {1} -passin stdin -passout stdin"
+CLOSED_AP="internet"
 
 class Runner(QThread):
     '''
     Authenticates to polimi and downloads cert
     '''
-
-    def __init__(self,user,password,anonuser,certPass,ptext,pbar):
+    statusChanged = Signal(int,unicode)
+    def __init__(self,nm,user,password,anonuser,certPass,ptext,pbar):
         '''
         Constructor
         '''
         QThread.__init__(self)
         self.triumph = True
         self.user = user
-        #self.pbar = pbar
-        #self.ptext=ptext
+        self.nm_iface=nm.applet
+        self.anonuser = anonuser
         self.password = password
         self.passphrase=certPass
         self.certLocation=os.path.expanduser(CERT_LOCATION)
@@ -51,20 +53,17 @@ class Runner(QThread):
         if PROXY:
             self.bro.set_proxies({"http":PROXY,"https":PROXY})
         self.bro.set_handle_robots(0)
-        #self.pbar.setValue(0)
     def run(self):
-        #self.ptext.setText(self.tr("Connecting to ASICT..."))
+        self.statusChanged.emit(0,self.tr("Connecting to ASICT..."))
         self.bro.open(START_URL)
         self.bro.follow_link(text='logon')
-        #self.pbar.setValue(15)
-        #self.ptext.setText(self.tr("Logging in..."))
+        self.statusChanged.emit(15,self.tr("Logging in..."))
         self.bro.select_form('')
         self.bro.form['login'] = str(self.user)
         self.bro.form['password'] = str(self.password)
         self.bro.submit()
         self.response = self.bro.open(START_URL)
-        #self.pbar.setValue(40)
-        #self.ptext.setText(self.tr("Downloading certificate.."))
+        self.statusChanged.emit(40,self.tr("Downloading certificate.."))
         self.response = self.bro.follow_link(text='nuovo certificato')
         self.bro.select_form(name='exists')
         self.bro.submit()
@@ -82,13 +81,24 @@ class Runner(QThread):
             f.close()
         except IOError:
             print "I/O Error during file writing"
-        #self.pbar.setValue(70)
-        #self.ptext.setText(self.tr("Creating CA certificate..."))
+        self.statusChanged.emit(70,self.tr("Creating CA certificate..."))
         popen_obj=Popen(CMD_OSSL.format(self.certLocation,os.path.join(self.certFolder,"asi.cer")), shell=True,stdin=PIPE,stdout=PIPE)
         popen_obj.communicate(self.passphrase+"\n"+self.passphrase)
-        #self.pbar.setValue(90)
-        #self.ptext.setText(self.tr("Creating NM connection..."))
-
+        self.statusChanged.emit(90,self.tr("Creating NM connection..."))
+        c=settings.WiFi(CLOSED_AP)
+        c["802-11-wireless"]["security"]="802-11-wireless-security"
+        c["802-11-wireless-security"]={}
+        c["802-11-wireless-security"]["key-mgmt"]="wpa-eap"
+        c["802-11-wireless-security"]["auth-alg"]="open"
+        c["802-1x"]={}
+        c["802-1x"]["eap"]=['tls']
+        c["802-1x"]["anonymous-identity"]= self.anonuser
+        c["802-1x"]["ca-cert"]="file://"+os.path.join(self.certFolder,"asi.cer")+"\0"
+        c["802-1x"]["private-key"]="file://"+self.certLocation+"\0"
+        c["802-1x"]["private-key-password"]=self.passphrase
+        c["802-1x"]["phase2-auth"]="mschapv2"
+        self.nm_iface.AddConnection(c.conmap)
+        self.statusChanged.emit(100,self.tr("Done"))
 
 
 

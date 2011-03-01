@@ -208,7 +208,7 @@ p, li { white-space: pre-wrap; }
        <number>0</number>
       </property>
       <property name="value">
-       <number>539436</number>
+       <number>539465</number>
       </property>
       <property name="textVisible">
        <bool>true</bool>
@@ -366,7 +366,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QProgressBar" name="progress_statusbar">
       <property name="value">
-       <number>24</number>
+       <number>0</number>
       </property>
      </widget>
     </item>

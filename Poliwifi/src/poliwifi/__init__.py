@@ -103,8 +103,19 @@ class PoliWifiLinux(QObject):
             self.polimiconnected=True
     def workersStart(self):
         self.browser=Browser()
-        self.auth=Runner(self.handler.personCode.text(), self.handler.personCodePwd.text(),self.handler.matricola.text(),self.handler.certificatepassword.text(),self.handler.progress_status,self.handler.progress_statusbar)
+        
+        anonuser = {
+                  0: lambda m: "S"+m,
+                  1: lambda m: "D"+m,
+                  2: lambda m: "U"+m,
+                  3: lambda m: "V"+m
+        }[self.handler.usertype.currentIndex()](self.handler.matricola.text())
+        self.auth=Runner(self.nmhandler,self.handler.personCode.text(), self.handler.personCodePwd.text(),anonuser,self.handler.certificatepassword.text(),self.handler.progress_status,self.handler.progress_statusbar)
         self.connect(self.auth,SIGNAL("finished()"),self,SLOT("downloadDone()"))
+        self.connect(self.auth,SIGNAL("statusChanged(int,QString)"),self,SLOT("updateProgress(int,QString)"))
         self.auth.start()
     def downloadDone(self):
         self.window.button(Wizard.NextButton).setVisible(True)
+    def updateProgress(self,num,text):
+        self.handler.progress_status.setText(text)
+        self.handler.progress_statusbar.setValue(num)
