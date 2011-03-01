@@ -20,12 +20,18 @@
 import interface
 import nm
 from PySide import QtGui
+
 from PySide.QtCore import QObject,SIGNAL,SLOT
 from gui import Wizard
 import networkmanager
 import networkmanager.applet.settings as settings
+from networkmanager.applet import SYSTEM_SERVICE
+from workers import Runner
+from mechanize import Browser
+
 
 class PoliWifiLinux(QObject):
+    '''Base class'''
     def __init__(self):
         QObject.__init__(self)
         self.window = Wizard()
@@ -34,11 +40,17 @@ class PoliWifiLinux(QObject):
         self.window.setOption(QtGui.QWizard.NoBackButtonOnStartPage,True)
         self.openssid="polimi"
         self.openconn=None
-        
+        self.polimiconnected=False
+        self.auth=None
+        self.downloader=None
+        self.browser=None
     def show(self):
+        '''Shows GUI. Initializes NM'''
         self.handler.polimi_status.setVisible(False)
         self.handler.polimi_statusbar.setVisible(False)
         self.nmhandler=nm.NetworkManagerClient()
+        if self.nmhandler.wireless["state"]==8:
+            self.nmhandler.wireless.Disconnect()
         self.openap=None
         if self.nmhandler.wireless!=None:
             self.openap=self.nmhandler.findAPbyName(self.openssid) #TODO
@@ -49,15 +61,21 @@ class PoliWifiLinux(QObject):
         QObject.connect(self.window,SIGNAL("currentIdChanged(int)"),self,SLOT("pageChanged(int)"))
         self.window.show()
     def pageChanged(self,id):
-        if id==1:
+        '''Called when page in the Wizard is changed'''
+        self.handler.polimi_statusbar.setVisible(False)
+        if id==1 and not self.polimiconnected:
             self.handler.polimi_status.setVisible(True)
             self.handler.polimi_statusbar.setVisible(True)
             self.window.button(Wizard.NextButton).setVisible(False)
             self.window.button(Wizard.BackButton).setVisible(False)
-            self.nmhandler.nm._connect_to_signal("StateChanged", self.connectionStateChanged)
             self.connectToOpenAp()
+        elif id==3:
+            self.window.button(Wizard.NextButton).setVisible(False)
+            self.window.button(Wizard.BackButton).setVisible(False)
+            self.workersStart()
             
     def connectToOpenAp(self):
+        '''Connects to "polimi"'''
         for conn in self.nmhandler.applet.ListConnections():
             cs=conn.GetSettings()
             if ("802-11-wireless" in cs) and cs["802-11-wireless"]["ssid"]=="polimi":
@@ -65,11 +83,28 @@ class PoliWifiLinux(QObject):
         if not self.openconn:
             c=settings.WiFi(self.openssid)
             self.nmhandler.applet.AddConnection(c.ConMap())
-        self.nmhandler.connectTo(self.openssid)
-        
-    def connectionStateChanged(self,status):
-        status1=networkmanager.NetworkManager.State(3)
-        if str(status)==str(status1):
+            self.nmhandler.applet.connect_to_signal("NewConnection", self.connectToOpenAp_helper,"org.freedesktop.NetworkManagerSettings")
+        else:
+            self.connectToOpenAp_helper()
+    def connectToOpenAp_helper(self,*args,**kwargs):
+        '''Helper function'''
+        if not self.nmhandler.connectTo(self.openssid):
+            self.handler.polimi_status.setText(self.tr("<b><font color='red'>Cannot connect to Polimi AP<b></font>"))
+            self.handler.polimi_statusbar.setVisible(False)
+            self.window.goto_finish=True
+        self.nmhandler.wireless.connect_to_signal("StateChanged", self.connectionStateChanged,"org.freedesktop.NetworkManager.Device")
+            
+    def connectionStateChanged(self,newstate,oldstate,reason):
+        '''When connection changes'''
+        if newstate==8:
             self.handler.polimi_status.setText(self.tr("<b><font color='green'>Connection established</font></b>"))
             self.handler.polimi_statusbar.setVisible(False)
             self.window.button(Wizard.NextButton).setVisible(True)
+            self.polimiconnected=True
+    def workersStart(self):
+        self.browser=Browser()
+        self.auth=Runner(self.handler.personCode.text(), self.handler.personCodePwd.text(),self.handler.matricola.text(),self.handler.certificatepassword.text(),self.handler.progress_status,self.handler.progress_statusbar)
+        self.connect(self.auth,SIGNAL("finished()"),self,SLOT("downloadDone()"))
+        self.auth.start()
+    def downloadDone(self):
+        self.window.button(Wizard.NextButton).setVisible(True)

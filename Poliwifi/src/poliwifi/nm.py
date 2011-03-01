@@ -50,14 +50,20 @@ class NetworkManagerClient(object):
 
                     
     def connectTo(self,ssid):
-        '''STUB'''
+        '''Connects to wireless AP.
+            >>Implies that connection exists
+            @return: returns False if connection doesn't exist
+        '''
+        connected=False
+        self.applet=NetworkManagerSettings(SYSTEM_SERVICE)
         for conn in self.applet.ListConnections():
             cs=conn.GetSettings()
             if ("802-11-wireless" in cs) and cs["802-11-wireless"]["ssid"]==ssid:
-                #self.nm.ActivateConnection(USER_SERVICE,conn.object_path,)
-                pass
-            else:
-                pass
+                self.nm.ActivateConnection(SYSTEM_SERVICE,conn.object_path,self.wireless.object_path,"/")
+                connected=True
+        if connected:
+            return True
+        return False
     
     def findAPbyName(self,ssid):
         '''Finds AP object by name. Returns only AP with most strength
