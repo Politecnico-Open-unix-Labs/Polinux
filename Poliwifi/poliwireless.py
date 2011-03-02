@@ -19,19 +19,21 @@
 
 from poliwifi import PoliWifiLinux,workers
 from PySide.QtGui import QApplication
+from PySide.QtCore import QTranslator
 from sys import argv
 from time import sleep
 import subprocess
-import os
+import locale
 
 if __name__ == "__main__":
-    #if os.getuid()!=0:
-    #    subprocess.call(["gksudo", "--description", "poliwifi","python "+__file__])
-    #else:
+        translator = QTranslator()
+        translator.load('il8n/'+locale.getdefaultlocale()[0])
         app=QApplication(argv)
+        app.installTranslator(translator)
         gui = PoliWifiLinux()
         gui.show()
         app.exec_()
+        
         if gui.handler.connectnow.isChecked():
             gui.nmhandler.autoConnectOn(workers.CLOSED_AP)
             sleep(2)
