@@ -16,18 +16,27 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-
+from sys import path
+try:
+    path.append("/usr/share/poliwireless")
+except:
+    pass
 from poliwifi import PoliWifiLinux,workers
 from PySide.QtGui import QApplication
 from PySide.QtCore import QTranslator
 from sys import argv
 from time import sleep
+import os.path as syspath
 import subprocess
 import locale
 
 if __name__ == "__main__":
+        
         translator = QTranslator()
-        translator.load('il8n/'+locale.getdefaultlocale()[0])
+        if syspath.exists('il8n/'+locale.getdefaultlocale()[0]):
+            translator.load('il8n/'+locale.getdefaultlocale()[0])
+        else:
+            translator.load('/usr/share/polireless/il8n/'+locale.getdefaultlocale()[0])
         app=QApplication(argv)
         app.installTranslator(translator)
         gui = PoliWifiLinux()
