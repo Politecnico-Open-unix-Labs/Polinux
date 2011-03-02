@@ -76,7 +76,9 @@ class NetworkManagerClient(object):
                 maxap=ap
                 maxpower=ap["Strength"]
         return maxap
-    
-    def getConnectionByName(self):
-        '''STUB'''
-        pass
+    def autoConnectOn(self,ssid):
+        for conn in self.applet.ListConnections():
+            cs=conn.GetSettings()
+            if ("802-11-wireless" in cs) and cs["802-11-wireless"]["ssid"]==ssid:
+                cs["connection"]["autoconnect"]=True
+                conn.Update(cs)

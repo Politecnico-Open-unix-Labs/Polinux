@@ -208,7 +208,7 @@ p, li { white-space: pre-wrap; }
        <number>0</number>
       </property>
       <property name="value">
-       <number>539465</number>
+       <number>539471</number>
       </property>
       <property name="textVisible">
        <bool>true</bool>
@@ -433,10 +433,17 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QCheckBox" name="connectnow">
       <property name="text">
-       <string>Connect Now</string>
+       <string>Automatically connect when in range</string>
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pleaseconnect">
+      <property name="text">
+       <string>Connect Now!</string>
       </property>
      </widget>
     </item>

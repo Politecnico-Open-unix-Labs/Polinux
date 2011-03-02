@@ -26,7 +26,7 @@ from gui import Wizard
 import networkmanager
 import networkmanager.applet.settings as settings
 from networkmanager.applet import SYSTEM_SERVICE
-from workers import Runner
+from workers import Runner,CLOSED_AP
 from mechanize import Browser
 
 
@@ -44,6 +44,7 @@ class PoliWifiLinux(QObject):
         self.auth=None
         self.downloader=None
         self.browser=None
+        self.downloaderror=False
     def show(self):
         '''Shows GUI. Initializes NM'''
         self.handler.polimi_status.setVisible(False)
@@ -59,6 +60,7 @@ class PoliWifiLinux(QObject):
             self.handler.aperror.setText(self.tr("<b><font color='red'>Polimi AP is not in range. Are you under wifi coverage?<b></font>"))
             self.handler.aperror.setVisible(True)
         QObject.connect(self.window,SIGNAL("currentIdChanged(int)"),self,SLOT("pageChanged(int)"))
+        self.connect(self.handler.pleaseconnect,SIGNAL("clicked()"),self,SLOT("connectClosed()"))
         self.window.show()
     def pageChanged(self,id):
         '''Called when page in the Wizard is changed'''
@@ -72,6 +74,7 @@ class PoliWifiLinux(QObject):
         elif id==3:
             self.window.button(Wizard.NextButton).setVisible(False)
             self.window.button(Wizard.BackButton).setVisible(False)
+            self.handler.deownload_complete.setVisible(False)
             self.workersStart()
             
     def connectToOpenAp(self):
@@ -82,6 +85,7 @@ class PoliWifiLinux(QObject):
                 self.openconn=cs
         if not self.openconn:
             c=settings.WiFi(self.openssid)
+            c["connection"]["autoconnect"]=False
             self.nmhandler.applet.AddConnection(c.ConMap())
             self.nmhandler.applet.connect_to_signal("NewConnection", self.connectToOpenAp_helper,"org.freedesktop.NetworkManagerSettings")
         else:
@@ -101,9 +105,10 @@ class PoliWifiLinux(QObject):
             self.handler.polimi_statusbar.setVisible(False)
             self.window.button(Wizard.NextButton).setVisible(True)
             self.polimiconnected=True
+            if self.window.currentId()==4:
+                self.handler.pleaseconnect.setText(self.tr("Connected"))
     def workersStart(self):
         self.browser=Browser()
-        
         anonuser = {
                   0: lambda m: "S"+m,
                   1: lambda m: "D"+m,
@@ -113,9 +118,20 @@ class PoliWifiLinux(QObject):
         self.auth=Runner(self.nmhandler,self.handler.personCode.text(), self.handler.personCodePwd.text(),anonuser,self.handler.certificatepassword.text(),self.handler.progress_status,self.handler.progress_statusbar)
         self.connect(self.auth,SIGNAL("finished()"),self,SLOT("downloadDone()"))
         self.connect(self.auth,SIGNAL("statusChanged(int,QString)"),self,SLOT("updateProgress(int,QString)"))
+        self.connect(self.auth,SIGNAL("error(QString)"),self,SLOT("errorShow(QString)"))
         self.auth.start()
     def downloadDone(self):
-        self.window.button(Wizard.NextButton).setVisible(True)
+        if not self.downloaderror:
+            self.handler.deownload_complete.setVisible(True)
+            self.window.button(Wizard.NextButton).setVisible(True)
     def updateProgress(self,num,text):
         self.handler.progress_status.setText(text)
         self.handler.progress_statusbar.setValue(num)
+    def errorShow(self,errorstr):
+        self.handler.deownload_complete.setVisible(True)
+        self.handler.deownload_complete.setText("<b><font color='red'>"+errorstr+"</font></b>")
+        self.downloaderror=True
+    def connectClosed(self):
+        self.handler.pleaseconnect.setText(self.tr("Connecting..."))
+        self.handler.pleaseconnect.setEnabled(False)
+        self.nmhandler.connectTo(CLOSED_AP)

@@ -17,9 +17,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-from poliwifi import PoliWifiLinux,nm
+from poliwifi import PoliWifiLinux,workers
 from PySide.QtGui import QApplication
 from sys import argv
+from time import sleep
 import subprocess
 import os
 
@@ -31,5 +32,7 @@ if __name__ == "__main__":
         gui = PoliWifiLinux()
         gui.show()
         app.exec_()
-    
-    
+        if gui.handler.connectnow.isChecked():
+            gui.nmhandler.autoConnectOn(workers.CLOSED_AP)
+            sleep(2)
+            
