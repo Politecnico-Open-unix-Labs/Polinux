@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=poliwireless
+Name=Poliwireless
+Icon=poliwireless
+GenericName=Configure Internet
+Terminal=false
+Categories=Settings;

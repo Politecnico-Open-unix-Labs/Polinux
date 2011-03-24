@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 # This file is part of the Polinux project.
 #
 # Copyright(c) 2011 Radu Andries
@@ -36,7 +37,7 @@ if __name__ == "__main__":
         if syspath.exists('il8n/'+locale.getdefaultlocale()[0]):
             translator.load('il8n/'+locale.getdefaultlocale()[0])
         else:
-            translator.load('/usr/share/polireless/il8n/'+locale.getdefaultlocale()[0])
+            translator.load('/usr/share/poliwireless/il8n/'+locale.getdefaultlocale()[0])
         app=QApplication(argv)
         app.installTranslator(translator)
         gui = PoliWifiLinux()

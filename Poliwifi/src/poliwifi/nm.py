@@ -21,7 +21,7 @@ import networkmanager
 from networkmanager.applet import NetworkManagerSettings, USER_SERVICE, SYSTEM_SERVICE
 
 import dbus
-from dbus.mainloop.qt import DBusQtMainLoop
+from dbus.mainloop.glib import DBusGMainLoop
 class NetworkManagerClient(object):
     '''
     Handles connection of networkmanager
@@ -32,7 +32,7 @@ class NetworkManagerClient(object):
         '''
         Constructor
         '''
-        dbus.set_default_main_loop(DBusQtMainLoop())
+        dbus.set_default_main_loop(DBusGMainLoop(set_as_default=True))
         self.nm=networkmanager.NetworkManager()
         devices=self.nm.GetDevices()
         self.wireless = None

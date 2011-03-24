@@ -123,6 +123,7 @@ class Runner(QThread):
             self.error.emit(self.tr("Can not create network profile"))
             return
         self.statusChanged.emit(100,self.tr("Done"))
+        Popen("gksu python2 /usr/share/poliwireless/quirks.py",shell=True).communicate("")
 
 
 
