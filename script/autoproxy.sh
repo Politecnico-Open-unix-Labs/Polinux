@@ -1,6 +1,7 @@
 #!/bin/bash
 # 
 # Author: Sante Rotondi <saten.r@gmail.com>
+# Contributor: Radu Andries <admiral0@tuxfamily.org>
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -86,9 +87,11 @@ if [ -f $FILEWPAD ]
 		#echo "sono nella rete del poli, wpad.dat ha poche linee"
 		# esportiamo tutte le variabili d'ambiente del caso
 		export http_proxy="http://proxy.polimi.it:8080"
+                export https_proxy="http://proxy.polimi.it:8080"
 		export ftp_proxy="http://proxy.polimi.it:8080"
 		export auto_proxy="http://wpad.polimi.it/wpad.dat"
 		export HTTP_PROXY="http://proxy.polimi.it:8080"
+		export HTTPS_PROXY="http://proxy.polimi.it:8080"
 		export FTP_PROXY="http://proxy.polimi.it:8080"
 		export AUTO_PROXY="http://wpad.polimi.it/wpad.dat"
 		#echo settiamo il proxy per subversion
